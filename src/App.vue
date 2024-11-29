@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { ModalsContainer, useModal } from 'vue-final-modal'
+import { RouterLink, RouterView } from "vue-router";
+
 </script>
 
 <template>
@@ -10,10 +13,6 @@
       </nav>
     </div>
   </header>
-
+  <ModalsContainer />
   <RouterView />
 </template>
-
-<script>
-  import { RouterLink, RouterView } from "vue-router";
-</script>
