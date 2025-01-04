@@ -1,24 +1,27 @@
 <script setup lang="ts">
 import { defineProps, defineEmits } from "vue";
 
-defineProps({
-    portrait: String,
-    name: String,
-    job: String,
-    motto: String,
-    to: String,
-});
+export type KingdomCardType = {
+    portrait: string,
+    name: string,
+    job: string,
+    motto: string,
+}
 
-const emit = defineEmits(["update:to"]);
+const { portrait, name, job, motto } = defineProps<KingdomCardType>();
 
-function select(value: string | undefined) {
-    emit("update:to", value);
+const emit = defineEmits<{
+    (event: "emitAll", payload: KingdomCardType): void;
+}>();
+
+function select() {
+    emit("emitAll", { portrait, name, job, motto });
 }
 
 </script>
 
 <template>
-    <button class="flip-card" @click="select(name)">
+    <button class="flip-card" @click="select">
         <div class="flip-card-inner">
             <div class="flip-card-front">
                 <img :src="portrait" alt="Avatar">

@@ -1,33 +1,46 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import aboutCard from "../components/cards/aboutCard.vue"
+import kingdomCard, { type KingdomCardType } from "../components/cards/kingdomCard.vue";
 import audienceRequestForm from "@/components/cards/audienceRequestForm.vue";
 
-import { ModalsContainer, useModal } from 'vue-final-modal'
+import { ref } from "vue";
+import { useModal } from "vue-final-modal";
 
+// Define a reactive object to hold the modal's attributes
+const modalAttrs = ref<KingdomCardType & { onConfirm: () => void }>({
+  portrait: 'portrait',
+  name: 'name',
+  job: 'job',
+  motto: 'motto',
+  onConfirm: () => { close() }
+});
+
+// Modal setup
 const { open, close } = useModal({
   component: audienceRequestForm,
-  attrs: {
-    name: 'Hello World!',
-    onConfirm() {
-      close()
-    },
-  },
-  slots: {
-    default: '<p>The content of the modal</p>',
-  },
-})
+  attrs: modalAttrs.value,
+});
 
-const toRef = ref("");
-const formRef = ref<HTMLElement | null>(null);
+function openContact(card: KingdomCardType) {
 
-function scrollToForm() {
-  if (formRef.value instanceof HTMLElement) {
-    formRef.value.scrollIntoView({ behavior: "smooth" });
-  } else {
-    console.log("formRef is not a valid HTMLElement");
+  modalAttrs.value.job = card.job;
+  modalAttrs.value.motto = card.motto;
+  modalAttrs.value.name = card.name;
+  modalAttrs.value.portrait = card.portrait;
+  modalAttrs.value.onConfirm = () => {
+    close();
   }
+
+  // modalAttrs.value = {
+  //   ...card,
+  //   onConfirm() {
+  //     close(); // Close the modal after confirming
+  //   },
+  // };
+
+  open(); // Open the modal
 }
+
+
 
 </script>
 
@@ -36,31 +49,20 @@ function scrollToForm() {
     <section id="about" class="container flexi">
       <h1>About</h1>
       <p class="full">Welcome to the kingdom of Medivelia</p>
-      <VButton @click="open">
-        Open Modal
-      </VButton>
     </section>
 
     <section id="cards" class="container flexi">
-      <aboutCard v-model="toRef" @update:to="scrollToForm" portrait="/img/King.webp" name="" job="King" motto="..." />
-      <aboutCard v-model="toRef" @update:to="scrollToForm" portrait="/img/Queen.webp" name="" job="Queen" motto="..." />
-
-      <aboutCard v-model="toRef" @update:to="scrollToForm" portrait="/img/Knight.webp" name="Croakie" job="Knight"
-        motto="If someone get's past me uninvited, something is wrong with the world." />
-
-      <aboutCard v-model="toRef" @update:to="scrollToForm" portrait="/img/Scholarch.webp" name="Viseidous" job="Advisor"
-        motto="I wonder. How DID that happen?" />
-      <aboutCard v-model="toRef" @update:to="scrollToForm" portrait="/img/Scholarch.webp" name="Viseidous"
-        job="Scholarch" motto="I wonder. How DID that happen?" />
+      <!-- Pass props to each kingdomCard and listen for emit-all -->
+      <kingdomCard portrait="/img/King.webp" name="Rand" job="King"
+        motto="Strength secures the crown; wisdom preserves it." @emit-all="openContact" />
+      <kingdomCard portrait="/img/Queen.webp" name="Renee" job="Queen"
+        motto="Grace commands loyalty; charm conquers all." @emit-all="openContact" />
+      <kingdomCard portrait="/img/Finance.webp" name="Verrick" job="Minister of Coin"
+        motto="A coin saved is a kingdom earned." @emit-all="openContact" />
+      <kingdomCard portrait="/img/Knight.webp" name="Croakie" job="Knight"
+        motto="If someone gets past me uninvited, something is wrong with the world." @emit-all="openContact" />
+      <kingdomCard portrait="/img/Scholarch.webp" name="Viseidous" job="Advisor" motto="I wonder. How DID that happen?"
+        @emit-all="openContact" />
     </section>
-
-    <!-- <section id="request">
-      <div class="full flexi mt-12">
-        <audienceRequestForm v-model="toRef" ref="formRef" />
-      </div>
-
-    </section> -->
-
-
   </main>
 </template>
